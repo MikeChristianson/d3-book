@@ -13,7 +13,7 @@
 			
 			//Create SVG element
       var w = 500;
-      var h = 20;
+      var h = 200;
 
       var svg = d3.select("body")
 						.append("svg")
@@ -31,11 +31,11 @@
               return i * 20;
             },
             y: function (row) {
-              return h - row.Accumulation * 10;
+              return h - row.Accumulation * 100;
             },
             width: 10,
             height: function (row) {
-              return row.Accumulation * 10;
+              return row.Accumulation * 100;
             }
           })
       });
