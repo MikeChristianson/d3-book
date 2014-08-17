@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Experiment with Rain Data</title>
+		<script type="text/javascript" src="../d3/d3.v3.js"></script>
+		<style type="text/css">
+			/* No style rules here yet */		
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			
+			//Create SVG element
+      var w = 500;
+      var h = 20;
+
+      var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+
+      var something = d3.csv('rain.csv', function (data) {
+        console.log(data);
+        svg.selectAll('rect')
+          .data(data)
+          .enter()
+          .append('rect')
+          .attr({
+            x: function (row, i) {
+              return i * 20;
+            },
+            y: function (row) {
+              return h - row.Accumulation * 10;
+            },
+            width: 10,
+            height: function (row) {
+              return row.Accumulation * 10;
+            }
+          })
+      });
+
+		</script>
+	</body>
+</html>
