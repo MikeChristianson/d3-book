@@ -4,6 +4,7 @@
 		<meta charset="utf-8">
 		<title>D3: Experiment with Rain Data</title>
 		<script type="text/javascript" src="../d3/d3.v3.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
 		<style type="text/css">
 			/* No style rules here yet */		
 		</style>
@@ -13,7 +14,9 @@
 			
 			//Create SVG element
       var w = 500;
-      var h = 200;
+      var h = 300;
+      var barPadding = 5;
+      var scaleFactor = 1;
 
       var svg = d3.select("body")
 						.append("svg")
@@ -22,20 +25,37 @@
 
       var something = d3.csv('rain.csv', function (data) {
         console.log(data);
+        var values = _.pluck(data, 'Accumulation');
+        values = _.map(values, function (v) {
+          return Number.parseFloat(v);
+        });
+        var maxValue = _.max(values);
+        scaleFactor = h / maxValue;
+        console.log('max %d, scale %d', maxValue, scaleFactor);
         svg.selectAll('rect')
           .data(data)
           .enter()
           .append('rect')
           .attr({
             x: function (row, i) {
-              return i * 20;
+              var x = i * (w / data.length);
+              console.log('x %d', x);
+              return x;
             },
-            y: function (row) {
-              return h - row.Accumulation * 100;
+            y: function (row, i) {
+              var y = h - row.Accumulation * scaleFactor;
+              console.log('y %d', y);
+              return y;
             },
-            width: 10,
-            height: function (row) {
-              return row.Accumulation * 100;
+            width: function (row, i) {
+              var width = w / data.length - barPadding;
+              console.log('width %d', width);
+              return width;
+            },
+            height: function (row, i) {
+              var height = row.Accumulation * scaleFactor;
+              console.log('height %d', height);
+              return height;
             }
           })
       });
