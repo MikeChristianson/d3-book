@@ -23,15 +23,19 @@
 						.attr("width", w)
 						.attr("height", h);
 
-      var something = d3.csv('rain.csv', function (data) {
+      d3.csv('rain.csv', function (data) {
         console.log(data);
-        var values = _.pluck(data, 'Accumulation');
-        values = _.map(values, function (v) {
-          return Number.parseFloat(v);
+        data = _.map(data, function (row) {
+          return {
+            Accumulation: Number.parseFloat(row.Accumulation),
+            Days: Number.parseInt(row.Days),
+            Date: new Date(row.Date)
+          };
         });
-        var maxValue = _.max(values);
+        var maxValue = _.max(_.pluck(data, 'Accumulation'));
         scaleFactor = h / maxValue;
         console.log('max %d, scale %d', maxValue, scaleFactor);
+
         svg.selectAll('rect')
           .data(data)
           .enter()
