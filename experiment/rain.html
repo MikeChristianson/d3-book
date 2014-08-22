@@ -44,6 +44,8 @@
           .domain([0, maxValue])
           .range([padding, h - padding]);
         var xScale = d3.scale.linear()
+//        var xScale = d3.time.scale()
+//          .domain([_.max(_.pluck(data, 'Date')), _.min(_.pluck(data, 'Date'))])
           .domain([0, data.length])
           .range([padding, w - padding]);
 
@@ -54,6 +56,7 @@
           .attr({
             x: function (row, i) {
               var x = xScale(i);
+//              var x = xScale(row.Date);
               console.log('x %d', x);
               return x;
             },
