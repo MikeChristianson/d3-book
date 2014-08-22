@@ -61,7 +61,27 @@
               console.log('height %d', height);
               return height;
             }
+          });
+
+        svg.selectAll('text')
+          .data(data)
+          .enter()
+          .append('text')
+          .text(function (d) {
+            return d.Days;
           })
+          .attr({
+            x: function (row, i) {
+              var x = i * (w / data.length);
+              console.log('x %d', x);
+              return x;
+            },
+            y: function (row, i) {
+              var y = h ;
+              console.log('y %d', y);
+              return y;
+            }
+          });
       });
 
 		</script>
