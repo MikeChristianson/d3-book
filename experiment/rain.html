@@ -16,7 +16,7 @@
       var w = 500;
       var h = 300;
       var barPadding = 5;
-      var scaleFactor = 1;
+      var padding = 10;
 
       var svg = d3.select("body")
 						.append("svg")
@@ -32,9 +32,20 @@
             Date: new Date(row.Date)
           };
         });
-        var maxValue = _.max(_.pluck(data, 'Accumulation'));
-        scaleFactor = h / maxValue;
-        console.log('max %d, scale %d', maxValue, scaleFactor);
+
+        var minValue = d3.min(data, function (d) {
+          return d.Accumulation;
+        });
+        var maxValue = d3.max(data, function (d) {
+          return d.Accumulation;
+        });
+
+        var yScale = d3.scale.linear()
+          .domain([0, maxValue])
+          .range([padding, h - padding]);
+        var xScale = d3.scale.linear()
+          .domain([0, data.length])
+          .range([padding, w - padding]);
 
         svg.selectAll('rect')
           .data(data)
@@ -42,13 +53,13 @@
           .append('rect')
           .attr({
             x: function (row, i) {
-              var x = i * (w / data.length);
+              var x = xScale(i);
               console.log('x %d', x);
               return x;
             },
             y: function (row, i) {
-              var y = h - row.Accumulation * scaleFactor;
-              console.log('y %d', y);
+              var y = h - yScale(row.Accumulation);
+              console.log('accum %f scaled to y %d', row.Accumulation, y);
               return y;
             },
             width: function (row, i) {
@@ -57,12 +68,13 @@
               return width;
             },
             height: function (row, i) {
-              var height = row.Accumulation * scaleFactor;
-              console.log('height %d', height);
+              var height = yScale(row.Accumulation);
+              console.log('accum %f scaled to height %d', row.Accumulation, height);
               return height;
             }
           });
 
+/*
         svg.selectAll('text')
           .data(data)
           .enter()
@@ -82,6 +94,7 @@
               return y;
             }
           });
+*/
       });
 
 		</script>
