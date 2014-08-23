@@ -6,7 +6,12 @@
 		<script type="text/javascript" src="../d3/d3.v3.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
 		<style type="text/css">
-			/* No style rules here yet */		
+			.axis path,
+      .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+      }
 		</style>
 	</head>
 	<body>
@@ -61,7 +66,7 @@
               return x;
             },
             y: function (row, i) {
-              var y = h - yScale(row.Accumulation);
+              var y = h - yScale(row.Accumulation) - padding*2;
               console.log('accum %f scaled to y %d', row.Accumulation, y);
               return y;
             },
@@ -76,6 +81,28 @@
               return height;
             }
           });
+
+        var xAxis = d3.svg.axis()
+          .scale(xScale)
+          .orient('bottom');
+
+        var yAxis = d3.svg.axis()
+          .scale(yScale)
+          .orient('left');
+
+        svg.append('g')
+          .attr({
+            class: 'axis',
+            transform: 'translate(0,' + (h - padding*2) + ')'
+          })
+          .call(xAxis);
+
+        svg.append('g')
+          .attr({
+            class: 'axis',
+            transform: 'translate(' + (padding*4) + ',0)'
+          })
+          .call(yAxis);
 
 /*
         svg.selectAll('text')
