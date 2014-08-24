@@ -18,7 +18,7 @@
 		<script type="text/javascript">
 			
 			//Create SVG element
-      var w = 500;
+      var w = 900;
       var h = 300;
       var barPadding = 5;
       var padding = 10;
@@ -46,40 +46,62 @@
         });
 
         var yScale = d3.scale.linear()
-          .domain([0, maxValue])
-          .range([padding, h - padding]);
+          .domain([0, Math.ceil(maxValue)])
+          .range([h - padding, padding]);
+
         var xScale = d3.scale.linear()
-//        var xScale = d3.time.scale()
-//          .domain([_.max(_.pluck(data, 'Date')), _.min(_.pluck(data, 'Date'))])
-          .domain([0, data.length])
+          .domain([_.min(_.pluck(data, 'Days')), _.max(_.pluck(data, 'Days'))])
           .range([padding, w - padding]);
+
+        var height = function (row) {
+          var y = h - yScale(row.Accumulation);
+          console.log('accum %f scaled to y %d', row.Accumulation, y);
+          return y;
+        };
+
+        var y = function (row) {
+          var height = yScale(row.Accumulation) - padding*2;
+          console.log('accum %f scaled to height %d', row.Accumulation, height);
+          return height;
+        };
+
+        var width = function () {
+          var width = w / 100 - barPadding;
+          console.log('width %d', width);
+          return width;
+        };
+
+        var x = function (row, i) {
+//          var x = xScale(i) + padding*4;
+          var x = xScale(row.Days) + padding*4;
+//              var x = xScale(row.Date);
+          console.log('x %d', x);
+          return x;
+        };
+
+        var colorScale = d3.scale.linear()
+          .domain([_.min(_.pluck(data, 'Days')), _.max(_.pluck(data, 'Days'))])
+          .range([0, 300]);
+
+        var fill = function(row) {
+          return d3.hsl(colorScale(row.Days), 0.5, 0.5);
+        };
+
+        var accum = function(row) {
+          return row.Accumulation;
+        };
 
         svg.selectAll('rect')
           .data(data)
           .enter()
           .append('rect')
           .attr({
-            x: function (row, i) {
-              var x = xScale(i);
-//              var x = xScale(row.Date);
-              console.log('x %d', x);
-              return x;
-            },
-            y: function (row, i) {
-              var y = h - yScale(row.Accumulation) - padding*2;
-              console.log('accum %f scaled to y %d', row.Accumulation, y);
-              return y;
-            },
-            width: function (row, i) {
-              var width = w / data.length - barPadding;
-              console.log('width %d', width);
-              return width;
-            },
-            height: function (row, i) {
-              var height = yScale(row.Accumulation);
-              console.log('accum %f scaled to height %d', row.Accumulation, height);
-              return height;
-            }
+            x: x,
+            y: y,
+            width: width,
+            height: height,
+            fill: fill,
+            accum: accum
           });
 
         var xAxis = d3.svg.axis()
@@ -93,7 +115,7 @@
         svg.append('g')
           .attr({
             class: 'axis',
-            transform: 'translate(0,' + (h - padding*2) + ')'
+            transform: 'translate(' + padding*4 + ',' + (h - padding*2) + ')'
           })
           .call(xAxis);
 
